@@ -12,7 +12,9 @@ It shows:
 
 ## Preview
 
-![Codex Level showing a real Lv.9 account with lifetime Token usage, level progress, and weekly usage](assets/codex-level-popover.png)
+<p align="center">
+  <img src="assets/codex-level-popover.png" alt="Codex Level showing a real Lv.9 account with lifetime Token usage, level progress, and weekly usage" width="360">
+</p>
 
 ## The QQ level idea
 
