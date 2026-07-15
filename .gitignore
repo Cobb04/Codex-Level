@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+.DS_Store
+Screenshots/
+NEXT_SESSION_PROMPT.md
+docs/superpowers/
