@@ -10,14 +10,18 @@ It shows:
 - weekly Codex usage, reset time, and available banked resets;
 - automatic refresh every minute, plus manual refresh.
 
+## Preview
+
+![Codex Level showing a real Lv.9 account with lifetime Token usage, level progress, and weekly usage](assets/codex-level-popover.png)
+
 ## The QQ level idea
 
 Yes, this project is openly inspired by QQ's classic level system. The numeric level is decomposed into the familiar progression:
 
-- 1 star = 1 level
-- 1 moon = 4 levels
-- 1 sun = 16 levels
-- 1 crown = 64 levels
+- ⭐ = 1 level
+- 🌙 = 4 levels
+- ☀️ = 16 levels
+- 👑 = 64 levels
 
 For example, Lv.9 is shown as `🌙🌙⭐`.
 
