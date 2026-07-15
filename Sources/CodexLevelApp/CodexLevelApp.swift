@@ -1,5 +1,6 @@
 import AppKit
 import CodexLevelCore
+import Combine
 import SwiftUI
 
 enum LoadState<Value: Sendable>: Sendable {
@@ -158,19 +159,77 @@ final class CodexLevelViewModel: ObservableObject {
 
 @main
 private struct CodexLevelApp: App {
-    @StateObject private var model = CodexLevelViewModel()
-
-    init() {
-        NSApplication.shared.setActivationPolicy(.accessory)
-    }
+    @NSApplicationDelegateAdaptor(CodexLevelAppDelegate.self) private var appDelegate
 
     var body: some Scene {
-        MenuBarExtra {
-            CodexLevelPopover(model: model)
-        } label: {
-            Text(model.menuBarTitle)
+        Settings {
+            EmptyView()
         }
-        .menuBarExtraStyle(.window)
+    }
+}
+
+@MainActor
+private final class CodexLevelAppDelegate: NSObject, NSApplicationDelegate {
+    private let model = CodexLevelViewModel()
+    private var statusItemController: StatusItemController?
+    private var globalHotKey: GlobalHotKey?
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApplication.shared.setActivationPolicy(.accessory)
+
+        let controller = StatusItemController(model: model)
+        statusItemController = controller
+        globalHotKey = try? GlobalHotKey { [weak controller] in
+            controller?.togglePopover()
+        }
+    }
+}
+
+@MainActor
+private final class StatusItemController: NSObject {
+    private let model: CodexLevelViewModel
+    private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    private let popover = NSPopover()
+    private var modelObservation: AnyCancellable?
+
+    init(model: CodexLevelViewModel) {
+        self.model = model
+        super.init()
+
+        if let button = statusItem.button {
+            button.target = self
+            button.action = #selector(togglePopover)
+            button.toolTip = "Codex Level · ⌥L"
+        }
+
+        let hostingController = NSHostingController(rootView: CodexLevelPopover(model: model))
+        hostingController.sizingOptions = [.preferredContentSize]
+        popover.behavior = .transient
+        popover.animates = true
+        popover.contentViewController = hostingController
+
+        updateTitle()
+        modelObservation = model.objectWillChange.sink { [weak self] in
+            Task { @MainActor [weak self] in
+                self?.updateTitle()
+            }
+        }
+    }
+
+    @objc func togglePopover() {
+        switch PopoverToggleAction.next(isPopoverShown: popover.isShown) {
+        case .show:
+            guard let button = statusItem.button else { return }
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            NSApplication.shared.activate(ignoringOtherApps: true)
+            popover.contentViewController?.view.window?.makeKey()
+        case .close:
+            popover.performClose(nil)
+        }
+    }
+
+    private func updateTitle() {
+        statusItem.button?.title = model.menuBarTitle
     }
 }
 

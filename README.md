@@ -8,13 +8,18 @@ It shows:
 - your current level and progress toward the next level;
 - QQ-style star, moon, sun, and crown level badges;
 - weekly Codex usage, reset time, and available banked resets;
-- automatic refresh every minute, plus manual refresh.
+- automatic refresh every minute, plus manual refresh;
+- a global `⌥L` shortcut that opens or closes the panel from anywhere.
 
 ## Preview
 
 <p align="center">
   <img src="assets/codex-level-popover.png" alt="Codex Level showing a real Lv.9 account with lifetime Token usage, level progress, and weekly usage" width="360">
 </p>
+
+## Keyboard shortcut
+
+Press `⌥L` (Option + L) anywhere in macOS to toggle the Codex Level panel. Clicking the menu bar item still works normally.
 
 ## The QQ level idea
 
