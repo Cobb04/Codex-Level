@@ -77,9 +77,11 @@ public struct CodexOAuthUsageClient: Sendable {
             }
 
             let rateLimit: RateLimit?
+            let planType: String?
 
             enum CodingKeys: String, CodingKey {
                 case rateLimit = "rate_limit"
+                case planType = "plan_type"
             }
         }
 
@@ -96,6 +98,7 @@ public struct CodexOAuthUsageClient: Sendable {
         return WeeklyRateLimit(
             usedPercent: window.usedPercent,
             windowDurationMinutes: window.limitWindowSeconds / 60,
-            resetsAt: Date(timeIntervalSince1970: window.resetAt))
+            resetsAt: Date(timeIntervalSince1970: window.resetAt),
+            plan: CodexPlan(serverValue: usage.planType))
     }
 }

@@ -15,7 +15,7 @@ import Testing
             return response(
                 request,
                 status: 200,
-                body: #"{"rate_limit":{"primary_window":{"used_percent":12,"reset_at":1784000000,"limit_window_seconds":18000},"secondary_window":{"used_percent":34,"reset_at":1784217600,"limit_window_seconds":604800}}}"#)
+                body: #"{"plan_type":"plus","rate_limit":{"primary_window":{"used_percent":12,"reset_at":1784000000,"limit_window_seconds":18000},"secondary_window":{"used_percent":34,"reset_at":1784217600,"limit_window_seconds":604800}}}"#)
         }
 
         let limit = try await CodexOAuthUsageClient(session: session)
@@ -24,6 +24,22 @@ import Testing
         #expect(limit.usedPercent == 34)
         #expect(limit.windowDurationMinutes == 10_080)
         #expect(limit.resetsAt == Date(timeIntervalSince1970: 1_784_217_600))
+        #expect(limit.plan == .plus)
+    }
+
+    @Test func missingPlanDoesNotDiscardWeeklyUsage() async throws {
+        let session = makeSession { request in
+            response(
+                request,
+                status: 200,
+                body: #"{"rate_limit":{"secondary_window":{"used_percent":34,"reset_at":1784217600,"limit_window_seconds":604800}}}"#)
+        }
+
+        let limit = try await CodexOAuthUsageClient(session: session)
+            .readWeeklyRateLimit(credentials: credentials)
+
+        #expect(limit.usedPercent == 34)
+        #expect(limit.plan == nil)
     }
 
     private func makeSession(

@@ -5,6 +5,26 @@ import CodexLevelCore
 
 @Suite struct CodexLevelViewModelTests {
     @MainActor
+    @Test func exposesPlanFromWeeklyUsageForTheHeaderBadge() async {
+        let model = CodexLevelViewModel(
+            profileLoader: {
+                .value(CodexProfile(lifetimeTokens: 1_500_000_000, currentStreakDays: 6))
+            },
+            weeklyLimitLoader: {
+                .value(WeeklyRateLimit(
+                    usedPercent: 48,
+                    windowDurationMinutes: 10_080,
+                    resetsAt: Date(timeIntervalSince1970: 1_800_000_000),
+                    plan: .pro5x))
+            },
+            startsAutomatically: false)
+
+        await model.refresh()
+
+        #expect(model.currentPlan == .pro5x)
+    }
+
+    @MainActor
     @Test func refreshFailureKeepsLastSuccessfulProfileAndWeeklyUsage() async {
         let profiles = ResultQueue(values: [
             LoadState.value(CodexProfile(lifetimeTokens: 1_500_000_000, currentStreakDays: 6)),

@@ -11,7 +11,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "CodexLevelCore"),
-        .executableTarget(name: "CodexLevelApp", dependencies: ["CodexLevelCore"]),
+        .executableTarget(
+            name: "CodexLevelApp",
+            dependencies: ["CodexLevelCore"],
+            resources: [.process("Resources")]),
         .testTarget(name: "CodexLevelCoreTests", dependencies: ["CodexLevelCore"]),
         .testTarget(name: "CodexLevelAppTests", dependencies: ["CodexLevelApp", "CodexLevelCore"]),
     ]

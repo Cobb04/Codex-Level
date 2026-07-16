@@ -59,6 +59,11 @@ final class CodexLevelViewModel: ObservableObject {
         return LevelProgress(lifetimeTokens: profile.lifetimeTokens)
     }
 
+    var currentPlan: CodexPlan? {
+        guard case let .value(limit) = weeklyLimit else { return nil }
+        return limit.plan
+    }
+
     var menuBarTitle: String {
         guard let levelProgress else {
             return isLoading ? "Codex · Loading…" : "Codex Level · —"
@@ -261,10 +266,19 @@ private struct CodexLevelPopover: View {
     private var header: some View {
         HStack(alignment: .top, spacing: 14) {
             VStack(alignment: .leading, spacing: 5) {
-                Text(greeting)
-                    .font(.system(size: 21, weight: .semibold))
-                    .lineLimit(1)
-                    .truncationMode(.tail)
+                HStack(alignment: .center, spacing: 7) {
+                    Text(greeting)
+                        .font(.system(size: 21, weight: .semibold))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+
+                    if let plan = model.currentPlan {
+                        PlanDiamondBadge(plan: plan)
+                            .layoutPriority(1)
+                            .help("\(plan.displayName) plan")
+                            .accessibilityLabel("\(plan.displayName) plan")
+                    }
+                }
 
                 if case let .value(profile) = model.profile {
                     let progress = LevelProgress(lifetimeTokens: profile.lifetimeTokens)
@@ -513,6 +527,49 @@ private struct CodexLevelPopover: View {
         .padding(.vertical, 10)
         .background(Color.secondary.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
+enum PlanDiamondAsset {
+    private static var resourceBundle: Bundle {
+        if let resourcesURL = Bundle.main.resourceURL,
+           let packagedBundle = Bundle(
+               url: resourcesURL.appendingPathComponent("CodexLevel_CodexLevelApp.bundle"))
+        {
+            return packagedBundle
+        }
+        return Bundle.module
+    }
+
+    static func resourceName(for plan: CodexPlan) -> String {
+        switch plan {
+        case .go: "plan-diamond-go"
+        case .plus: "plan-diamond-plus"
+        case .pro5x: "plan-diamond-pro5x"
+        case .pro20x: "plan-diamond-pro20x"
+        }
+    }
+
+    static func resourceURL(for plan: CodexPlan) -> URL? {
+        resourceBundle.url(
+            forResource: resourceName(for: plan),
+            withExtension: "png")
+    }
+}
+
+private struct PlanDiamondBadge: View {
+    let plan: CodexPlan
+
+    var body: some View {
+        Image(
+            nsImage: PlanDiamondAsset.resourceURL(for: plan)
+                .flatMap(NSImage.init(contentsOf:)) ?? NSImage())
+            .resizable()
+            .interpolation(.high)
+            .antialiased(true)
+            .scaledToFit()
+            .frame(width: 32, height: 20)
+        .fixedSize()
     }
 }
 

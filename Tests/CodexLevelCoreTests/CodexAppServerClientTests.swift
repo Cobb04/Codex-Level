@@ -11,6 +11,7 @@ import Testing
         #expect(limit.usedPercent == 37.5)
         #expect(limit.windowDurationMinutes == 10_080)
         #expect(limit.resetsAt == Date(timeIntervalSince1970: 1_784_217_600))
+        #expect(limit.plan == nil)
     }
 
     @Test func missingPrimaryWindowIsAFormatChange() {

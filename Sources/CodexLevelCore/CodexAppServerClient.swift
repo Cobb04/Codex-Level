@@ -5,11 +5,18 @@ public struct WeeklyRateLimit: Equatable, Sendable {
     public let usedPercent: Double
     public let windowDurationMinutes: Int
     public let resetsAt: Date
+    public let plan: CodexPlan?
 
-    public init(usedPercent: Double, windowDurationMinutes: Int, resetsAt: Date) {
+    public init(
+        usedPercent: Double,
+        windowDurationMinutes: Int,
+        resetsAt: Date,
+        plan: CodexPlan? = nil
+    ) {
         self.usedPercent = usedPercent
         self.windowDurationMinutes = windowDurationMinutes
         self.resetsAt = resetsAt
+        self.plan = plan
     }
 }
 
