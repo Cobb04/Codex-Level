@@ -12,6 +12,12 @@ It shows:
 - automatic refresh every minute, plus manual refresh;
 - a global `⌥L` shortcut that opens or closes the panel from anywhere.
 
+## Built with Codex and GPT-5.6
+
+**GPT-5.6 helped me with everything.**
+
+I built Codex Level with Codex and GPT-5.6—from designing the QQ-inspired progression system and plan diamonds to implementing usage tracking, polishing the macOS UI, writing tests, and debugging real-world data edge cases.
+
 ## Preview
 
 <p align="center">
